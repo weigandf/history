@@ -1,22 +1,22 @@
+import _extends from "babel-runtime/helpers/extends";
 import resolvePathname from "resolve-pathname";
 import valueEqual from "value-equal";
 import { parsePath } from "./PathUtils";
 
-export const createLocation = (path, state, key, currentLocation) => {
-  let location;
+export var createLocation = function createLocation(path, state, key, currentLocation) {
+  var location = void 0;
   if (typeof path === "string") {
     // Two-arg form: push(path, state)
     location = parsePath(path);
     location.state = state;
   } else {
     // One-arg form: push(location)
-    location = { ...path };
+    location = _extends({}, path);
 
     if (location.pathname === undefined) location.pathname = "";
 
     if (location.search) {
-      if (location.search.charAt(0) !== "?")
-        location.search = "?" + location.search;
+      if (location.search.charAt(0) !== "?") location.search = "?" + location.search;
     } else {
       location.search = "";
     }
@@ -27,20 +27,14 @@ export const createLocation = (path, state, key, currentLocation) => {
       location.hash = "";
     }
 
-    if (state !== undefined && location.state === undefined)
-      location.state = state;
+    if (state !== undefined && location.state === undefined) location.state = state;
   }
 
   try {
     location.pathname = decodeURI(location.pathname);
   } catch (e) {
     if (e instanceof URIError) {
-      throw new URIError(
-        'Pathname "' +
-          location.pathname +
-          '" could not be decoded. ' +
-          "This is likely caused by an invalid percent-encoding."
-      );
+      throw new URIError('Pathname "' + location.pathname + '" could not be decoded. ' + "This is likely caused by an invalid percent-encoding.");
     } else {
       throw e;
     }
@@ -53,10 +47,7 @@ export const createLocation = (path, state, key, currentLocation) => {
     if (!location.pathname) {
       location.pathname = currentLocation.pathname;
     } else if (location.pathname.charAt(0) !== "/") {
-      location.pathname = resolvePathname(
-        location.pathname,
-        currentLocation.pathname
-      );
+      location.pathname = resolvePathname(location.pathname, currentLocation.pathname);
     }
   } else {
     // When there is no prior location and pathname is empty, set it to /
@@ -68,9 +59,6 @@ export const createLocation = (path, state, key, currentLocation) => {
   return location;
 };
 
-export const locationsAreEqual = (a, b) =>
-  a.pathname === b.pathname &&
-  a.search === b.search &&
-  a.hash === b.hash &&
-  a.key === b.key &&
-  valueEqual(a.state, b.state);
+export var locationsAreEqual = function locationsAreEqual(a, b) {
+  return a.pathname === b.pathname && a.search === b.search && a.hash === b.hash && a.key === b.key && valueEqual(a.state, b.state);
+};
