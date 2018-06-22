@@ -129,6 +129,8 @@ const createHashHistory = (props = {}) => {
         action,
         getUserConfirmation,
         ok => {
+          transitionManager.callAfterTransitionHook(action, location);
+
           if (ok) {
             setState({ action, location });
           } else {
@@ -197,6 +199,8 @@ const createHashHistory = (props = {}) => {
       ok => {
         if (!ok) return;
 
+        transitionManager.callAfterTransitionHook(action, location);
+
         const path = createPath(location);
         const encodedPath = encodePath(basename + path);
         const hashChanged = getHashPath() !== encodedPath;
@@ -250,6 +254,8 @@ const createHashHistory = (props = {}) => {
       getUserConfirmation,
       ok => {
         if (!ok) return;
+
+        transitionManager.callAfterTransitionHook(action, location);
 
         const path = createPath(location);
         const encodedPath = encodePath(basename + path);
@@ -338,7 +344,13 @@ const createHashHistory = (props = {}) => {
     goBack,
     goForward,
     block,
-    listen
+    listen,
+    setBeforeTransitionHook(fn) {
+      transitionManager.setBeforeTransitionHook(fn)
+    },
+    setAfterTransitionHook(fn) {
+      transitionManager.setAfterTransitionHook(fn)
+    }
   };
 
   return history;

@@ -2,6 +2,8 @@ import warning from "warning";
 
 const createTransitionManager = () => {
   let prompt = null;
+  let beforeTransitionHook = null;
+  let afterTransitionHook = null;
 
   const setPrompt = nextPrompt => {
     warning(prompt == null, "A history supports only one prompt at a time");
@@ -13,12 +15,23 @@ const createTransitionManager = () => {
     };
   };
 
+  const setBeforeTransitionHook = fn => {
+    beforeTransitionHook = fn;
+  }
+
+  const setAfterTransitionHook = fn => {
+    afterTransitionHook = fn;
+  }
+
   const confirmTransitionTo = (
     location,
     action,
     getUserConfirmation,
     callback
   ) => {
+
+    beforeTransitionHook && beforeTransitionHook(action, location)
+
     // TODO: If another transition starts while we're still confirming
     // the previous one, we may end up in a weird state. Figure out the
     // best way to handle this.
@@ -71,7 +84,12 @@ const createTransitionManager = () => {
     setPrompt,
     confirmTransitionTo,
     appendListener,
-    notifyListeners
+    notifyListeners,
+    setBeforeTransitionHook,
+    setAfterTransitionHook,
+    callAfterTransitionHook(...args) {
+      afterTransitionHook && afterTransitionHook(...args);
+    }
   };
 };
 

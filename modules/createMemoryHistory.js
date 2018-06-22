@@ -65,6 +65,8 @@ const createMemoryHistory = (props = {}) => {
       ok => {
         if (!ok) return;
 
+        transitionManager.callAfterTransitionHook(action, location);
+
         const prevIndex = history.index;
         const nextIndex = prevIndex + 1;
 
@@ -110,6 +112,8 @@ const createMemoryHistory = (props = {}) => {
       ok => {
         if (!ok) return;
 
+        transitionManager.callAfterTransitionHook(action, location);
+
         history.entries[history.index] = location;
 
         setState({ action, location });
@@ -128,6 +132,9 @@ const createMemoryHistory = (props = {}) => {
       action,
       getUserConfirmation,
       ok => {
+
+        transitionManager.callAfterTransitionHook(action, location);
+
         if (ok) {
           setState({
             action,
@@ -170,7 +177,13 @@ const createMemoryHistory = (props = {}) => {
     goForward,
     canGo,
     block,
-    listen
+    listen,
+    setBeforeTransitionHook(fn) {
+      transitionManager.setBeforeTransitionHook(fn)
+    },
+    setAfterTransitionHook(fn) {
+      transitionManager.setAfterTransitionHook(fn)
+    }
   };
 
   return history;

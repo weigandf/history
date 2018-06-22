@@ -111,6 +111,8 @@ const createBrowserHistory = (props = {}) => {
         action,
         getUserConfirmation,
         ok => {
+          transitionManager.callAfterTransitionHook(action, location);
+
           if (ok) {
             setState({ action, location });
           } else {
@@ -172,6 +174,8 @@ const createBrowserHistory = (props = {}) => {
       ok => {
         if (!ok) return;
 
+        transitionManager.callAfterTransitionHook(action, location);
+
         const href = createHref(location);
         const { key, state } = location;
 
@@ -224,6 +228,8 @@ const createBrowserHistory = (props = {}) => {
       getUserConfirmation,
       ok => {
         if (!ok) return;
+
+        transitionManager.callAfterTransitionHook(action, location);
 
         const href = createHref(location);
         const { key, state } = location;
@@ -319,7 +325,13 @@ const createBrowserHistory = (props = {}) => {
     goBack,
     goForward,
     block,
-    listen
+    listen,
+    setBeforeTransitionHook(fn) {
+      transitionManager.setBeforeTransitionHook(fn)
+    },
+    setAfterTransitionHook(fn) {
+      transitionManager.setAfterTransitionHook(fn)
+    }
   };
 
   return history;
